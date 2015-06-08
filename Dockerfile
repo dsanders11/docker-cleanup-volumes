@@ -1,24 +1,21 @@
-#
-#Cleanup orphaned docker volumes
-#Usage:
-#docker run -v /var/run/docker.sock:/var/run/docker.sock -v /var/lib/docker:/var/lib/docker --rm martin/docker-cleanup-volumes [--dry-run]
-#
 FROM alpine:3.1
 
-MAINTAINER Martin van Beurden <chadoe@gmail.com>
+MAINTAINER David Sanders <dsanders11@ucsbalum.com>
 
-ENV DOCKER_VERSION=1.5.0
+# Install dependencies first for layer caching
+RUN apk add --update-cache curl bash grep
 
-#Install an up to date version of docker
-RUN apk add --update-cache curl bash grep && \
-# the docker package in alpine disables aufs and devicemapper
-    curl -sSL https://get.docker.com/builds/Linux/x86_64/docker-$DOCKER_VERSION -o /usr/bin/docker && \
-    chmod +x /usr/bin/docker && \
-#cleanup
-    apk del curl && rm -rf /var/cache/apk/*
+# This is here first for maximum layer caching
+ENTRYPOINT [ "/home/docker/docker-entry.sh" ]
 
-#Add the cleanup script
-ADD ./docker-cleanup-volumes.sh /usr/local/bin/
+# Add the Docker entrypoint
+ADD docker-entry.sh /home/docker/docker-entry.sh
 
-#Define entrypoint
-ENTRYPOINT ["/usr/local/bin/docker-cleanup-volumes.sh"]
+# Add the cleanup script
+ADD docker-cleanup-local-volumes.sh /usr/local/bin/
+
+# Add the install Docker client script
+ADD install-docker-client.sh /home/docker/install-docker-client.sh
+
+# This comes last as it changes per branch
+RUN /home/docker/install-docker-client.sh

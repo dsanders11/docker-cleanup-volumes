@@ -1,5 +1,7 @@
 #! /bin/bash
 
+# Copyright (c) 2014 Martin van Beurden
+
 set -eo pipefail
 
 #usage: sudo ./docker-cleanup-volumes.sh [--dry-run]
