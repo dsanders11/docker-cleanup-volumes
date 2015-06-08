@@ -2,7 +2,7 @@
 
 # Copyright (c) 2014 Martin van Beurden
 
-DOCKER_VERSION=1.6.2
+DOCKER_VERSION=1.6.0
 
 # the docker package in alpine disables aufs and devicemapper
 curl -sSL https://get.docker.com/builds/Linux/x86_64/docker-$DOCKER_VERSION -o /usr/bin/docker
